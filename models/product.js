@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const dirname = require('../utils/paths');
 
@@ -23,6 +24,7 @@ module.exports = class Product{
     }
 
     save() {
+        this.id = uuidv4();
         getProductsFromFile((data) => {
             data.push(this);
             fs.writeFile(p, JSON.stringify(data), (err) => {
@@ -33,5 +35,12 @@ module.exports = class Product{
 
     static getAllProducts (cb) {
         getProductsFromFile(cb);
+    }
+
+    static getProductById (id ,cb) {
+        getProductsFromFile(products => {
+            const product = products.filter(x => x.id === id);
+            cb(product[0]);
+        })
     }
 };

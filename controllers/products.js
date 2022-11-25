@@ -1,3 +1,4 @@
+const Cart = require("../models/cart");
 const Product = require("../models/product");
 
 exports.getHomePage = (req, res, next) => {
@@ -6,6 +7,14 @@ exports.getHomePage = (req, res, next) => {
 
 exports.getCartPage = (req, res, next) => {
   res.render("shop/cart", { pageTitle: "Cart" });
+}
+
+exports.saveToCart = (req, res, next) => {
+  const id = req.body.productId;
+  Product.getProductById(id, (product) => {
+    Cart.addProduct(product.id, product.price);
+    res.redirect('/cart')
+  });
 }
 
 exports.getOrdersPage = (req, res, next) => {
@@ -17,6 +26,14 @@ exports.getProductsPage = (req, res, next) => {
     res.render("shop/product-list", { prods: data, pageTitle: "Products" });
   });
 };
+
+exports.getDetailsPage = (req, res, next) => {
+  const id = req.params.id;
+  Product.getProductById(id, (product) => {
+    console.log('ddddd', product);
+    res.render("shop/product-details", { product: product, pageTitle: "Details" });
+  })
+}
 
 exports.getAddProductPage = (req, res, next) => {
   res.render("admin/add-product", { pageTitle: "Add some products" });
