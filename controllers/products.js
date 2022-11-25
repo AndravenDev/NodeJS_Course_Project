@@ -36,19 +36,32 @@ exports.getDetailsPage = (req, res, next) => {
 }
 
 exports.getAddProductPage = (req, res, next) => {
-  res.render("admin/add-product", { pageTitle: "Add some products" });
+  res.render("admin/edit-product", { pageTitle: "Add some products", editing: false });
 };
+
+exports.getEditProductPage = (req, res, next) => {
+  Product.getProductById(req.params.id, (product) => {
+    res.render("admin/edit-product", { pageTitle: "Edit some stuff", product: product, editing: true });
+  })
+};
+
+exports.saveUpdatedProduct = (req, res, next) => {
+  const { id, title, price, imageUrl, desc } = req.body
+  const updatedProduct = new Product(id, title, imageUrl, price, desc);
+  console.log(updatedProduct);
+  updatedProduct.save();
+  res.redirect('/');
+}
 
 exports.getAdminProductPage = (req, res, next) => {
   Product.getAllProducts((data) => {
-    console.log('dataa ', data);
     res.render("admin/admin-products", { prods: data, pageTitle: "Products" });
   });
 };
 
 exports.saveProducts = (req, res, next) => {
   const {title, imageUrl, price, desc} = req.body;
-  const newProduct = new Product(title, imageUrl, price, desc);
+  const newProduct = new Product(null, title, imageUrl, price, desc);
   newProduct.save();
   res.redirect("/add-product");
 };
