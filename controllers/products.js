@@ -6,15 +6,34 @@ exports.getHomePage = (req, res, next) => {
 }
 
 exports.getCartPage = (req, res, next) => {
-  res.render("shop/cart", { pageTitle: "Cart" });
+  Cart.getCartProducts((cartItems => {
+    Product.getAllProducts((allProducts) => {
+      const cItems = [];
+      for(product in allProducts){
+        if(cartItems.products.find(x => x.id === allProducts[product].id)){
+          cItems.push({product: allProducts[product], qty: cartItems.products.find(x => x.id === allProducts[product].id).qty});
+        }
+      } 
+      console.log('draste ', cItems);
+      res.render("shop/cart", { pageTitle: "Cart", cartItems: cItems });
+    });
+  }));
 }
 
 exports.saveToCart = (req, res, next) => {
   const id = req.body.productId;
   Product.getProductById(id, (product) => {
     Cart.addProduct(product.id, product.price);
-    res.redirect('/cart')
+    res.redirect('/product-list')
   });
+}
+
+exports.removeItemFromCart = (req, res, next) => {
+  const id = req.params.id;
+  Product.getProductById(id, (product) => {
+    Cart.deleteProduct(product.id, product.price)
+    res.redirect('/cart');
+  })
 }
 
 exports.getOrdersPage = (req, res, next) => {
@@ -65,3 +84,9 @@ exports.saveProducts = (req, res, next) => {
   newProduct.save();
   res.redirect("/add-product");
 };
+
+exports.deleteProduct = (req, res, next) => {
+  const productId = req.params.id;
+  Product.deleteById(productId);
+  res.redirect('/admin-products');
+}

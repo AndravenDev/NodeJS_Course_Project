@@ -7,6 +7,22 @@
 
     <main>
         <h1>Cart</h1>
+        <% if (cartItems.length > 0) { %>
+            <ul>
+                <% cartItems.forEach(products => { %>
+                    <li>
+                        <p><%=products.product.title %> <span>(<%= products.qty %>)</span></p>
+                        <p><%=products.product.price %></p>
+                        <p><%=products.product.description %></p>
+                        <form action="/remove-from-cart/<%=products.product.id %>" method="POST">
+                            <button class="btn" type="submit">Remove from Cart</button>
+                        </form>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <h1>No products in cart</h1>
+        <% } %>
     </main>
 </body>
 
