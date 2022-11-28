@@ -17,6 +17,7 @@ const getProductsFromFile = (cb) => {
     });
 }
 
+const db = require('../utils/database');
 module.exports = class Product{
     constructor(id, title, imageUrl, price, description){
         this.id = id,
@@ -27,47 +28,20 @@ module.exports = class Product{
     }
 
     save() {
-        getProductsFromFile((data) => {
-            if(this.id){
-                const existingProductIndex = data.findIndex(x => x.id === this.id);
-                const updatedProducts = [...data];
-                updatedProducts[existingProductIndex] = this;
-
-                fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
-                    console.log(err);
-                });
-            } else {
-                this.id = uuidv4();
-                data.push(this);
-                fs.writeFile(p, JSON.stringify(data), (err) => {
-                    console.log(err);
-                });
-            }
-        });
+        return db.execute('INSERT INTO product (title, price, imageURL, description) VALUES (?, ?, ?, ?)', 
+        [this.title, this.price, this.imageUrl, this.description]
+        );
     }
 
     static deleteById (id) {
-        getProductsFromFile(prods => {
-            const productToDelete = prods.find(x => x.id === id);
-            const updatedProductList = prods.filter(x => x.id !== id);
-            console.log('ehaaa', updatedProductList);
-            fs.writeFile(p, JSON.stringify(updatedProductList), (err) => {
-                console.log(err);
-                if(!err){
-                    Cart.deleteProduct(id, productToDelete.price);
-                }
-            });
-        });
+
     }
 
-    static getAllProducts (cb) {
-        getProductsFromFile(cb);
+    static getAllProducts () {
+        return db.execute('SELECT * FROM PRODUCT');
     }
 
-    static getProductById (id ,cb) {
-        getProductsFromFile(products => {
-            const product = products.filter(x => x.id === id);
-            cb(product[0]);
-        })
+    static getProductById (id) {
+        return db.execute('SELECT * FROM product WHERE product.id = ?', [id]);
     }
 };

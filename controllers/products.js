@@ -41,17 +41,18 @@ exports.getOrdersPage = (req, res, next) => {
 }
 
 exports.getProductsPage = (req, res, next) => {
-  Product.getAllProducts((data) => {
-    res.render("shop/product-list", { prods: data, pageTitle: "Products" });
+  Product.getAllProducts().then(([rows, fieldData]) => {
+    console.log('rows ', rows);
+    res.render("shop/product-list", { prods: rows, pageTitle: "Products" });
   });
 };
 
 exports.getDetailsPage = (req, res, next) => {
   const id = req.params.id;
-  Product.getProductById(id, (product) => {
-    console.log('ddddd', product);
-    res.render("shop/product-details", { product: product, pageTitle: "Details" });
-  })
+  Product.getProductById(id).then(([product]) => {
+    console.log('lllll ', product[0]);
+    res.render("shop/product-details", { product: product[0], pageTitle: "Details" });
+  }).catch(err => console.log(err));
 }
 
 exports.getAddProductPage = (req, res, next) => {
@@ -73,16 +74,16 @@ exports.saveUpdatedProduct = (req, res, next) => {
 }
 
 exports.getAdminProductPage = (req, res, next) => {
-  Product.getAllProducts((data) => {
-    res.render("admin/admin-products", { prods: data, pageTitle: "Products" });
+  Product.getAllProducts().then(([rows, fieldData]) => {
+    console.log('rows ', rows);
+    res.render("shop/product-list", { prods: rows, pageTitle: "Products" });
   });
 };
 
 exports.saveProducts = (req, res, next) => {
   const {title, imageUrl, price, desc} = req.body;
   const newProduct = new Product(null, title, imageUrl, price, desc);
-  newProduct.save();
-  res.redirect("/add-product");
+  newProduct.save().then(() => res.redirect("/add-product")).catch(err => console.log(err));
 };
 
 exports.deleteProduct = (req, res, next) => {
