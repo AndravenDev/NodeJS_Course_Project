@@ -7,7 +7,10 @@
 
     <main>
         <h1><%= product.price %></h1>
-        <p>what</p>
+        <p><%= product.title %></p>
+        <p><%= product.price %></p>
+        <p><%= product.description %></p>
+        <img src="<%= product.imageUrl %>">
 
         <%- include('../includes/add-to-cart.ejs') %>
     </main>
