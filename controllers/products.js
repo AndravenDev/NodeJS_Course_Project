@@ -1,5 +1,6 @@
 const Cart = require("../models/cart");
 const Product = require("../models/product");
+const User = require("../models/user");
 
 exports.getHomePage = (req, res, next) => {
   res.render("shop/index", { pageTitle: "Home" });
@@ -46,7 +47,7 @@ exports.getOrdersPage = (req, res, next) => {
 };
 
 exports.getProductsPage = (req, res, next) => {
-  Product.findAll()
+  req.user.getProducts()
     .then((data) => {
       console.log("DATA ", data);
       res.render("shop/product-list", { prods: data, pageTitle: "Products" });
@@ -75,7 +76,7 @@ exports.getAddProductPage = (req, res, next) => {
 
 exports.getEditProductPage = (req, res, next) => {
   const id = req.params.id;
-  Product.findAll({ where: { id: id } })
+  req.user.getProducts({where: { id: id }})
     .then((products) => {
       res.render("admin/edit-product", {
         product: products[0],
@@ -117,7 +118,8 @@ exports.getAdminProductPage = (req, res, next) => {
 
 exports.saveProducts = (req, res, next) => {
   const { title, imageUrl, price, desc } = req.body;
-  Product.create({ title, imageUrl, price, description: desc })
+  req.user
+    .createProduct({ title, imageUrl, price, description: desc })
     .then((data) => {
       res.redirect("/admin-products");
     })
