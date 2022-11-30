@@ -1,6 +1,5 @@
 const Cart = require("../models/cart");
 const Product = require("../models/product");
-const User = require("../models/user");
 
 exports.getHomePage = (req, res, next) => {
   res.render("shop/index", { pageTitle: "Home" });
