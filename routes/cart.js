@@ -10,4 +10,6 @@ router.post('/remove-from-cart/:id', cartController.removeItemFromCart);
 
 router.post('/add-to-cart', cartController.saveToCart);
 
+router.post('/create-order', cartController.postOrder)
+
 module.exports = router;

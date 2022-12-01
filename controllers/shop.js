@@ -3,7 +3,12 @@ exports.getHomePage = (req, res, next) => {
 };
 
 exports.getOrdersPage = (req, res, next) => {
-  res.render("shop/orders", { pageTitle: "Orders" });
+  req.user
+    .getOrders({ include: ['products']})
+    .then((orders) => {
+      res.render("shop/orders", { pageTitle: "Orders", orders: orders });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getProductsPage = (req, res, next) => {
