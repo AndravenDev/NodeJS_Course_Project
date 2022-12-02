@@ -10,6 +10,6 @@ router.get('/product-list', shopController.getProductsPage);
 
 router.get('/details/:id', shopController.getDetailsPage);
 
-router.get('/orders', shopController.getOrdersPage);
+// router.get('/orders', shopController.getOrdersPage);
 
 module.exports = router;

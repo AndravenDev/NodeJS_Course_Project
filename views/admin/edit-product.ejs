@@ -16,11 +16,11 @@
                 <input type="number" name="price" id="price"     value=<% if(editing) { %> <%= product.price %> <% }%>>
 
                 <label for="title">Description</label>
-                <textarea type="text" name="desc" id="desc"><% if(editing) { %> <%= product.description %> <% }%></textarea>
+                <textarea type="text" name="description" id="description"><% if(editing) { %> <%= product.description %> <% }%></textarea>
             </div>
 
             <% if(editing) {%>
-                <input type="hidden" value="<%= product.id %>" name="id">
+                <input type="hidden" value="<%= product._id %>" name="id">
             <% } %>
 
             <button type="submit"><% if(editing) { %>Update Products<% } else { %>Add Product<% }%></button>
