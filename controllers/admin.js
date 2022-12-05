@@ -10,8 +10,16 @@ exports.getAddProductPage = (req, res, next) => {
 
 exports.saveProducts = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(title, price, imageUrl, description);
-  product.save()
+  const product = new Product(
+    title,
+    price,
+    imageUrl,
+    description,
+    null,
+    req.user._id
+  );
+  product
+    .save()
     .then((data) => {
       res.redirect("/admin-products");
     })
@@ -20,10 +28,18 @@ exports.saveProducts = (req, res, next) => {
 
 exports.saveUpdatedProduct = (req, res, next) => {
   const { id, title, price, imageUrl, description } = req.body;
-  console.log('BODY ', req.body);
-  const product = new Product(title, price, imageUrl, description, new mongoDb.ObjectId(id));
-  console.log('nre prod ', product);
-    product.save().then((data) => {
+  console.log("BODY ", req.body);
+  const product = new Product(
+    title,
+    price,
+    imageUrl,
+    description,
+    new mongoDb.ObjectId(id)
+  );
+  console.log("nre prod ", product);
+  product
+    .save()
+    .then((data) => {
       res.redirect("/");
     })
     .catch((err) => console.log(err));

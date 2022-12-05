@@ -5,11 +5,11 @@ const bodyParser = require("body-parser");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-// const cartRoutes = require("./routes/cart");
+const cartRoutes = require("./routes/cart");
 const rootDir = require("./utils/paths");
 // const sequelize = require("./utils/database");
 // const Product = require("./models/product");
-// const User = require("./models/user");
+const User = require("./models/user");
 // const Cart = require("./models/cart");
 // const CartItem = require("./models/cart-item");
 // const Order = require("./models/order");
@@ -24,14 +24,20 @@ app.use(express.static(path.join(rootDir, "public")));
 app.set("view engine", "ejs");
 app.set("views", "views");
 
+app.use((req, res, next) => {
+  User.findById('638dfe8cab6eb77a39a457f8')
+    .then(user => {
+      req.user = new User(user.name, user.email, user.cart, user._id);
+      next();
+    })
+    .catch(err => console.log(err));
+});
+
 app.use(bodyParser.urlencoded());
 app.use(adminRoutes.routes);
 app.use(shopRoutes);
-// app.use(cartRoutes);
+app.use(cartRoutes);
 
-// app.use((req, res, next) => {
-//   res.status(404).render("404", { pageTitle: "Nicy" });
-// });
 mongoConnect(client => {
   app.listen(3000);
 })

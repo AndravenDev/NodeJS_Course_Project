@@ -6,8 +6,9 @@ exports.getHomePage = (req, res, next) => {
 
 exports.getOrdersPage = (req, res, next) => {
   req.user
-    .getOrders({ include: ['products']})
+    .getOrders()
     .then((orders) => {
+      console.log(orders[0]);
       res.render("shop/orders", { pageTitle: "Orders", orders: orders });
     })
     .catch((err) => console.log(err));
@@ -16,7 +17,6 @@ exports.getOrdersPage = (req, res, next) => {
 exports.getProductsPage = (req, res, next) => {
   Product.fetchAll()
     .then((data) => {
-      console.log("DATA ", data[0]._id.id);
       res.render("shop/product-list", { prods: data, pageTitle: "Products" });
     })
     .catch((err) => console.log(err));
