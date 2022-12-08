@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const mongoDb = require("mongodb");
+const product = require("../models/product");
 
 exports.getAddProductPage = (req, res, next) => {
   res.render("admin/edit-product", {
@@ -10,14 +11,14 @@ exports.getAddProductPage = (req, res, next) => {
 
 exports.saveProducts = (req, res, next) => {
   const { title, imageUrl, price, description } = req.body;
-  const product = new Product(
-    title,
-    price,
-    imageUrl,
-    description,
-    null,
-    req.user._id
-  );
+  console.log(req.user);
+  const product = new Product({
+    title: title,
+    price: price,
+    description: description,
+    imageUrl: imageUrl,
+    userId: req.user._id
+  });
   product
     .save()
     .then((data) => {
@@ -28,21 +29,17 @@ exports.saveProducts = (req, res, next) => {
 
 exports.saveUpdatedProduct = (req, res, next) => {
   const { id, title, price, imageUrl, description } = req.body;
-  console.log("BODY ", req.body);
-  const product = new Product(
-    title,
-    price,
-    imageUrl,
-    description,
-    new mongoDb.ObjectId(id)
-  );
-  console.log("nre prod ", product);
-  product
-    .save()
-    .then((data) => {
-      res.redirect("/");
+  Product.findById(id).then(product => {
+    product.title = title;
+    product.price = price;
+    product.imageUrl = imageUrl;
+    product.description = description;
+
+    product.save().then(() => {
+      res.redirect('/admin-products');
     })
-    .catch((err) => console.log(err));
+    .catch(err => console.log(err));
+  });
 };
 
 exports.getEditProductPage = (req, res, next) => {
@@ -59,7 +56,7 @@ exports.getEditProductPage = (req, res, next) => {
 };
 
 exports.getAdminProductPage = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
     .then((data) => {
       res.render("admin/admin-products", {
         prods: data,
@@ -71,7 +68,7 @@ exports.getAdminProductPage = (req, res, next) => {
 
 exports.deleteProduct = (req, res, next) => {
   const productId = req.params.id;
-  Product.deleteById(productId)
+  Product.findByIdAndDelete(productId)
     .then((data) => {
       res.redirect("/admin-products");
     })

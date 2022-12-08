@@ -1,65 +1,79 @@
-// const Sequelize = require("sequelize");
+const mongoose = require("mongoose");
 
-// const sequelize = require("../utils/database");
-const mongodb = require('mongodb');
-const getDb = require('../utils/database').getDb;
+const Schema = mongoose.Schema;
 
-class Product {
-  constructor(title, price, imageUrl, description, id, userId){
-    this.title = title;
-    this.price = price;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this._id = id;
-    this.userId = userId
-  }
+const productSchema = new Schema({
+  title: { type: String, required: true },
+  price: { type: Number, required: true },
+  description: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 
-  save() {
-    console.log('Thissss  ',this);
-    const db = getDb();
-    let dbOperation;
-    if(this._id){
-      dbOperation = db.collection('products').updateOne({ _id: mongodb.ObjectId(this._id) }, { $set: this });
-    } else {
-      dbOperation = db.collection('products').insertOne(this).then(data => console.log(data)).catch(err => console.log(err));
-    }
+},   {
+  timestamps: true,
+  toJSON: {virtuals: true}
+});
 
-    return db.collection('products').insertOne(this).then((res) => {
+module.exports = mongoose.model("Product", productSchema);
 
-    }).catch(err => console.log(err));
-  }
+// const mongodb = require('mongodb');
 
-  static fetchAll() {
-    const db = getDb();
-    return db.collection('products').find().toArray().then(products => {
-      return products
-    }).catch(err => console.log(err));
-  }
+// class Product {
+//   constructor(title, price, imageUrl, description, id, userId){
+//     this.title = title;
+//     this.price = price;
+//     this.imageUrl = imageUrl;
+//     this.description = description;
+//     this._id = id;
+//     this.userId = userId
+//   }
 
-  static findById(id) {
-    const db = getDb();
-    return db.collection('products').find({ _id: mongodb.ObjectId(id) }).next().then().catch(err => console.log(err));
-  }
+//   save() {
+//     console.log('Thissss  ',this);
+//     const db = getDb();
+//     let dbOperation;
+//     if(this._id){
+//       dbOperation = db.collection('products').updateOne({ _id: mongodb.ObjectId(this._id) }, { $set: this });
+//     } else {
+//       dbOperation = db.collection('products').insertOne(this).then(data => console.log(data)).catch(err => console.log(err));
+//     }
 
-  static deleteById(id) {
-    const db = getDb();
-    return db.collection('products').deleteOne({_id: new mongodb.ObjectId(id)}).then(result => {
-      console.log('deleted ', result);
-    }).catch(err => console.log(err));
-  }
-}
+//     return db.collection('products').insertOne(this).then((res) => {
 
-// const Product = sequelize.define("product", {
-//   id: {
-//     type: Sequelize.INTEGER,
-//     autoIncrement: true,
-//     allowNull: false,
-//     primaryKey: true,
-//   },
-//   title: { type: Sequelize.STRING, allowNull: false},
-//   price: { type: Sequelize.DOUBLE, allowNull: false},
-//   imageUrl: { type: Sequelize.STRING, allowNull: true},
-//   description: { type: Sequelize.STRING, allowNull: false }
-// });
+//     }).catch(err => console.log(err));
+//   }
 
-module.exports = Product;
+//   static fetchAll() {
+//     const db = getDb();
+//     return db.collection('products').find().toArray().then(products => {
+//       return products
+//     }).catch(err => console.log(err));
+//   }
+
+//   static findById(id) {
+//     const db = getDb();
+//     return db.collection('products').find({ _id: mongodb.ObjectId(id) }).next().then().catch(err => console.log(err));
+//   }
+
+//   static deleteById(id) {
+//     const db = getDb();
+//     return db.collection('products').deleteOne({_id: new mongodb.ObjectId(id)}).then(result => {
+//       console.log('deleted ', result);
+//     }).catch(err => console.log(err));
+//   }
+// }
+
+// // const Product = sequelize.define("product", {
+// //   id: {
+// //     type: Sequelize.INTEGER,
+// //     autoIncrement: true,
+// //     allowNull: false,
+// //     primaryKey: true,
+// //   },
+// //   title: { type: Sequelize.STRING, allowNull: false},
+// //   price: { type: Sequelize.DOUBLE, allowNull: false},
+// //   imageUrl: { type: Sequelize.STRING, allowNull: true},
+// //   description: { type: Sequelize.STRING, allowNull: false }
+// // });
+
+// module.exports = Product;

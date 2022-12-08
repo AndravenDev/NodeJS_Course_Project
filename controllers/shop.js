@@ -1,22 +1,23 @@
 const Product = require("../models/product");
+const Order = require("../models/order");
 
 exports.getHomePage = (req, res, next) => {
   res.render("shop/index", { pageTitle: "Home" });
 };
 
 exports.getOrdersPage = (req, res, next) => {
-  req.user
-    .getOrders()
+  console.log(req.user);
+  Order.find({ 'user.userId': req.user._id })
     .then((orders) => {
-      console.log(orders[0]);
       res.render("shop/orders", { pageTitle: "Orders", orders: orders });
     })
     .catch((err) => console.log(err));
 };
 
 exports.getProductsPage = (req, res, next) => {
-  Product.fetchAll()
+  Product.find().populate('userId')
     .then((data) => {
+      console.log(data);
       res.render("shop/product-list", { prods: data, pageTitle: "Products" });
     })
     .catch((err) => console.log(err));
